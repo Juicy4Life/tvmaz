@@ -14,10 +14,19 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
+  //debugger;
+  let shows = []
   let response = await axios.get('http://api.tvmaze.com/search/shows',{ params: {q:term}})
-  // debugger;
+  //debugger;
   console.log(response.data);
-  return response.data;
+  let results = response.data
+  console.log('results',results)
+  for (let result of results) {
+    let show = result.show;
+   shows.push({id: show.id, name: show.name, summary: show.summary, image: show.image ? show.image.medium :'https://tinyurl.com/tv-missing'});
+  }
+
+  return shows;
   console.log('end of get shows by term')
 }
 
@@ -25,14 +34,16 @@ async function getShowsByTerm(term) {
 /** Given list of shows, create markup for each and to DOM */
 
 function populateShows(shows) {
+   console.log('populateShows ran')
   $showsList.empty();
-
+  
   for (let show of shows) {
+    //debugger;
     const $show = $(
         `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img 
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg" 
+              src="${show.image}" 
               alt="Bletchly Circle San Francisco" 
               class="w-25 mr-3">
            <div class="media-body">
